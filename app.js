@@ -10,16 +10,25 @@ app.use(bodyParser.json());
 app.post('/signin', function(req, res) {
     var user_name=req.body.email;
     var password=req.body.password;
-    if(user_name=='admin' && password=='admin'){
-        res.send('success');
-    }
-    else {
-        res.send('Failure');
-    }
+    user.validateSignIn(user_name,password, function(result){
+        if(result){
+            res.send('Success')
+        }
+        else{
+            res.send('Wrong username password')
+        }
+    });   
 })
 app.post('/signup', function(req, res) {
-    user.signup('','','')
-    console.log(res);
+   var name = req.body.name;
+   var email = req.body.email;
+   var password = req.body.password;
+   if (name && email && password){
+       user.signup(name, email, password)
+   }
+   else {
+       res.send('FailureToInsert');
+   }
 })
 
 app.listen(7777,()=>{

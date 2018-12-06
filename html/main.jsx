@@ -68,10 +68,10 @@ class Signup extends React.Component{
             email: this.state.email,
             password: this.state.password
         })
-        .then((response) => {
+        .then(function(response){
             console.log(response);
         })
-        .catch((error) => {
+        .catch(function(error){
             console.log(error)
         })
     }

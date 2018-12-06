@@ -7,7 +7,7 @@ var app = express();
 app.use(express.static(path.join(__dirname,"/html")));
 
 app.use(bodyParser.json());
-app.post('/signin', (req, res) => {
+app.post('/signin', function(req, res) {
     var user_name=req.body.email;
     var password=req.body.password;
     if(user_name=='admin' && password=='admin'){
@@ -17,7 +17,7 @@ app.post('/signin', (req, res) => {
         res.send('Failure');
     }
 })
-app.post('/signup', (req, res) => {
+app.post('/signup', function(req, res) {
     user.signup('','','')
     console.log(res);
 })

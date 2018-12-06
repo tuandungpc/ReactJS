@@ -1,13 +1,11 @@
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var url = 'mongodb://localhost:27017';
-const dbName ='Blog';
 
 module.exports = {
     signup: function(name, email, password){
-        MongoClient.connect(url, function(err, client) {
-            if (err) throw err;
-            const db = client.db(dbName);
+        MongoClient.connect(url, {useNewUrlParser: true}, function(err, client) {
+            const db = client.db('Blog');
             db.collection('user').insertOne({
                 "name": name,
                 "email": email,
@@ -15,15 +13,16 @@ module.exports = {
             }, function(err, result){
                 assert.equal(err, null);
                 console.log("Saved the user sign up details.");
-                client.close();
             });
+            client.close();
         });
     },
     validateSignIn: function(username, password, callback){
-        MongoClient.connect(url, function(err, client){
-            const db = client.db(dbName);
+        MongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
+            const db = client.db('Blog');
             db.collection('user').findOne({
-                email: username, password: password
+                email: username,
+                password: password
             }, function(err, result){
                 if (result==null){
                     callback(false)
@@ -32,6 +31,7 @@ module.exports = {
                     callback(true)
                 }
             });
+            client.close();
         });
     }
 }

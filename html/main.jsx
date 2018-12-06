@@ -18,8 +18,8 @@ class Signin extends React.Component{
            email: this.state.email,
            password: this.state.password
        })
-       .then((respone) => {
-           console.log(respone);
+       .then((response) => {
+            console.log(response);
        })
        .catch((error) => {
            console.log(error);

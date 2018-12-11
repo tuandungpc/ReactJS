@@ -4,7 +4,7 @@ var session = require('express-session');
 var path = require("path");
 var bodyParser = require("body-parser");
 var user = require('./user');
-
+var post = require('./post')
 
 var app = express();
 app.use(session({
@@ -55,6 +55,20 @@ app.post('/signup', function(req, res) {
    else {
        res.send('FailureToInsert');
    }
+})
+
+app.post('/addpost', function(req, res){
+    var title = req.body.title;
+    var subject = req.body.subject;
+    post.addPost(title, subject, function(result){
+        res.send(result);
+    })
+})
+
+app.post('/getpost', function (req, res) {
+    post.getPost(function(result){
+      res.send(result);
+    });
 })
 
 app.listen(7777,()=>{

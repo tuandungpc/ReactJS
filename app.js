@@ -60,15 +60,31 @@ app.post('/signup', function(req, res) {
 app.post('/addpost', function(req, res){
     var title = req.body.title;
     var subject = req.body.subject;
-    post.addPost(title, subject, function(result){
+    var id = req.body.id;
+    if (id == '' || id == undefined){
+        post.addPost(title, subject, function(result){
+            res.send(result);
+        });
+    }
+    else {
+        console.log('update',title,subject);
+        post.updatePost(id, title, subject ,function(result){
         res.send(result);
-    })
+        }); 
+    }
 })
 
 app.post('/getpost', function (req, res) {
     post.getPost(function(result){
       res.send(result);
     });
+})
+
+app.post('/getPostWithId',(req, res)=>{
+    var id = req.body.id;
+    post.getPostWithId(id, (result)=>{
+        res.send(result);
+    })
 })
 
 app.listen(7777,()=>{

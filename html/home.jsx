@@ -2,6 +2,7 @@
 var Router = window.ReactRouter.Router;
 var Route = window.ReactRouter.Route;
 var hashHistory = window.ReactRouter.hashHistory;
+var browserHistory = window.ReactRouter.browserHistory;
 var Link = window.ReactRouter.Link;
 
 //Add Post
@@ -20,12 +21,14 @@ class AddPost extends React.Component{
     componentDidMount(){
         document.getElementById('addHyperLink').className = "active";
         document.getElementById('homeHyperlink').className = "";
+        this.getPostWithId();
     }
 
     addPost(){
         axios.post('/addPost', {
             title: this.state.title,
-            subject: this.state.subject
+            subject: this.state.subject,
+            id: this.state.id
         })
         .then((response) =>{
             console.log('response from add post is ', response);
@@ -35,6 +38,25 @@ class AddPost extends React.Component{
             console.log(error);
         });
     }
+
+    getPostWithId(){
+        var id = this.props.params.id;
+        var self = this;
+
+        axios.post('/getPostWithId', {
+            id: id
+        })
+        .then((response) => {
+            if (response){
+                self.setState({title:response.data.title});
+                self.setState({subject:response.data.subject});
+            }
+        })
+        .catch((error) => {
+            console.log('error is', error);
+        })
+    }
+
     handleTitleChange(e){
         this.setState({title:e.target.value})
     }
@@ -48,11 +70,11 @@ class AddPost extends React.Component{
               <form role="form">
               <br styles="clear:both" />
                 <div className="form-group">
-                  <input type="text" onChange={this.handleTitleChange} className="form-control" id="title" name="title" placeholder="Title" required />
+                  <input type="text" value={this.state.title} onChange={this.handleTitleChange} className="form-control" id="title" name="title" placeholder="Title" required />
                 </div>
                 
                 <div className="form-group">
-                    <textarea className="form-control" type="textarea" onChange={this.handleSubjectChange} id="subject" placeholder="Subject" maxlength="140" rows="7"></textarea>
+                    <textarea value={this.state.subject} onChange={this.handleSubjectChange} className="form-control" type="textarea"  id="subject" placeholder="Subject" maxlength="140" rows="7"></textarea>
                 </div>
                    
               <button type="button" onClick={this.addPost} id="submit" name="submit" className="btn btn-primary pull-right">Add Post</button>
@@ -66,11 +88,15 @@ class AddPost extends React.Component{
  class ShowPost extends React.Component {
     constructor(props) {
       super(props);
+      
       this.state = {
         posts:[]
       };
     }
-
+    
+    updatePost(id){
+        hashHistory.push('/addPost/' + id);
+    }
     
 
     componentDidMount(){
@@ -93,18 +119,32 @@ class AddPost extends React.Component{
     
     render() {
       return (
-          <div className="list-group"> 
-
-            {
-              this.state.posts.map(function(post,index) {
-                 return <a href="#" key={index} className="list-group-item active">
-                          <h4 className="list-group-item-heading">{post.title}</h4>
-                          <p className="list-group-item-text">{post.subject}</p>
-                        </a>
-              })
-            }
-            
-          </div>
+        <table className="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Subject</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {
+                    this.state.posts.map(function(post, index){
+                        return <tr key ={index} >
+                            <td>{index + 1}</td>
+                            <td>{post.title}</td>
+                            <td>{post.subject}</td>
+                            <td><i onClick={this.updatePost.bind(this,post._id)} className="fas fa-pencil-alt">&nbsp;</i></td>
+                            <td>
+                                <i className="fas fa-times">&nbsp;</i>
+                            </td>
+                        </tr>
+                    }.bind(this))
+                }    
+            </tbody>   
+        </table>
       )
     }
 }
@@ -115,6 +155,6 @@ class AddPost extends React.Component{
 ReactDOM.render(
     <Router history={hashHistory}>
         <Route component={ShowPost} path="/"></Route>
-        <Route component={AddPost} path="/addPost"></Route>
+        <Route component={AddPost} path="/addPost(/:id)"></Route>
     </Router>,
 document.getElementById('app'));

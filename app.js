@@ -61,7 +61,9 @@ app.post('/addpost', function(req, res){
     var title = req.body.title;
     var subject = req.body.subject;
     var id = req.body.id;
+    console.log('id is ' + id);
     if (id == '' || id == undefined){
+        console.log('add');
         post.addPost(title, subject, function(result){
             res.send(result);
         });
@@ -80,10 +82,31 @@ app.post('/getpost', function (req, res) {
     });
 })
 
-app.post('/getPostWithId',(req, res)=>{
+app.post('/deletePost', function(req,res){
     var id = req.body.id;
-    post.getPostWithId(id, (result)=>{
+    post.deletePost(id, function(result){
+      res.send(result)
+    })
+  })
+
+app.post('/getPostWithId', function(req, res){
+    var id = req.body.id;
+    post.getPostWithId(id, function(result){
         res.send(result);
+    })
+})
+
+app.post('/getProfile', function(req, res){
+    user.getUserInfo(sessions.username, function(result){
+        res.send(result)
+    })
+})
+
+app.post('/updateProfile', function(req, res){
+    let name = req.body.name;
+    let password = req.body.password;
+    user.updateProfile(name, password, sessions.username, function(result){
+        res.send(result)
     })
 })
 

@@ -33,5 +33,39 @@ module.exports = {
             });
             client.close();
         });
+    },
+    getUserInfo: function(username, callback){
+        MongoClient.connect(url, {useNewUrlParser:true}, function(err, client){
+            const db = client.db('Blog');
+            db.collection('user').findOne({
+                email: username
+            }, function(err, result){
+                if(result==null){
+                    callback(false)
+                }
+                else{
+                    callback(result);
+                }
+            });
+        })
+    },
+    updateProfile: function(name, password, username, callback){
+        MongoClient.connect(url, {useNewUrlParser:true}, function(err, client){
+            const db = client.db('Blog');
+            db.collection('user').updateOne(
+                {"email": username},
+                { $set:
+                    {   "name": name,
+                        "password": password
+                    }
+                }, function(err, result){
+                    if(err, result){
+                        callback(true)
+                    }
+                    else{
+                        callback(false)
+                    }
+                });
+        });
     }
 }
